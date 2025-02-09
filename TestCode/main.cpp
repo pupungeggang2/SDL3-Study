@@ -80,7 +80,11 @@ int main(int argc, char *argv[]) {
     SDL_Init(SDL_INIT_VIDEO);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
     window = SDL_CreateWindow("Triangle Example", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+    #ifdef _WIN32
     scale = SDL_GetWindowDisplayScale(window);
+    #else
+    scale = 1;
+    #endif
     SDL_SetWindowSize(window, 800 * scale, 600 * scale);
     SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     context = SDL_GL_CreateContext(window);
