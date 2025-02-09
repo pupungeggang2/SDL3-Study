@@ -1,5 +1,9 @@
 #include <iostream>
+#ifndef __APPLE__
+#include <SDL3/SDL.h>
+#else
 #include <SDL.h>
+#endif
 #include <glad/glad.h>
 
 const char* vertexShaderSource = R"(#version 330 core
@@ -63,8 +67,9 @@ float rx = 0, ry = 0, rz = 0;
 bool running = true;
 SDL_Window *window;
 SDL_GLContext context;
+float scale;
 
-int main(int argc, char* argv[]) {
+int main(int argc, char *argv[]) {
     // Data
     float vertices[18] = {
         0.0, 0.5, 0.0, 1.0, 0.0, 0.0,
@@ -74,10 +79,13 @@ int main(int argc, char* argv[]) {
 
     SDL_Init(SDL_INIT_VIDEO);
     SDL_GL_SetAttribute(SDL_GL_CONTEXT_PROFILE_MASK, SDL_GL_CONTEXT_PROFILE_CORE);
-    window = SDL_CreateWindow("Triangle Example", 800, 600, SDL_WINDOW_OPENGL);
+    window = SDL_CreateWindow("Triangle Example", 800, 600, SDL_WINDOW_OPENGL | SDL_WINDOW_HIGH_PIXEL_DENSITY);
+    scale = SDL_GetWindowDisplayScale(window);
+    SDL_SetWindowSize(window, 800 * scale, 600 * scale);
+    SDL_SetWindowPosition(window, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED);
     context = SDL_GL_CreateContext(window);
-    gladLoadGL();
-
+    //gladLoadGL();
+    gladLoadGLES2Loader((GLADloadproc) SDL_GL_GetProcAddress);
     std::cout << glGetString(GL_VERSION) << std::endl;
 
     GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
@@ -126,6 +134,10 @@ int main(int argc, char* argv[]) {
         while (SDL_PollEvent(&event)) {
             if (event.type == SDL_EVENT_QUIT) {
                 running = false;
+            }
+
+            if (event.type == SDL_EVENT_MOUSE_BUTTON_UP) {
+                std::cout << "(" << event.button.x / scale << ", " << event.button.y / scale << ")" <<  std::endl;
             }
         }
 
