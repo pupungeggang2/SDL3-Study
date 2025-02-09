@@ -78,6 +78,5 @@ luac.out
 Release/
 glad/
 glades/
-SDL3/
-SDL3.*/
+SDL3*/
 main
